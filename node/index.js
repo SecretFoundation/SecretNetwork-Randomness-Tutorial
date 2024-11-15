@@ -1,10 +1,11 @@
 import { SecretNetworkClient, Wallet } from "secretjs";
 import * as fs from "fs";
-import dotenv from "dotenv";
-dotenv.config();
+// import dotenv from "dotenv";
+// dotenv.config();
 
-const wallet = new Wallet(process.env.MNEMONIC);
-const contract_wasm = fs.readFileSync("../contract.wasm.gz");
+// const wallet = new Wallet(process.env.MNEMONIC);
+const wallet = new Wallet("desk pigeon hammer sleep only mistake stool december offer patrol once vacant");
+const contract_wasm = fs.readFileSync("../optimized-wasm/rng_template.wasm.gz");
 
 const secretjs = new SecretNetworkClient({
   chainId: "pulsar-3",
@@ -47,7 +48,7 @@ let instantiate_contract = async () => {
     throw new Error("codeId or contractCodeHash is not set.");
   }
 
-  const initMsg = { flip: 4 };
+  const initMsg = { flip: 1 };
   let tx = await secretjs.tx.compute.instantiateContract(
     {
       code_id: codeId,
@@ -69,7 +70,6 @@ let instantiate_contract = async () => {
   console.log(contractAddress);
 };
 
-// Chain the execution using promises
 upload_contract()
   .then(() => {
     instantiate_contract();
@@ -82,11 +82,11 @@ let try_flip = async () => {
   const flip_tx = await secretjs.tx.compute.executeContract(
     {
       sender: wallet.address,
-      contract_address: contractAddress,
+      contract_address: "secret194jga9whdutqsjxpvjxg0ykvm09290ql7qdudx",
       msg: {
         flip: {},
       },
-      code_hash: contractCodeHash,
+      code_hash: "ff6dd6a0e1dc8950ff74d12b07a3dc14c50dae3812f335f1d61e5f08226e662e",
     },
     { gasLimit: 100_000 }
   );
@@ -97,8 +97,8 @@ let try_flip = async () => {
 
 let query_flip = async () => {
   let flip_tx = await secretjs.query.compute.queryContract({
-    contract_address: contractAddress,
-    code_hash: contractCodeHash,
+    contract_address: "secret194jga9whdutqsjxpvjxg0ykvm09290ql7qdudx",
+    code_hash: "ff6dd6a0e1dc8950ff74d12b07a3dc14c50dae3812f335f1d61e5f08226e662e",
     query: {
       get_flip: {},
     },
